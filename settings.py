@@ -9,4 +9,11 @@ class Settings:
 
 		# nurse settings
 		self.nurse_speed = 1.5
+
+		# vaccine settings
+		self.vaccine_speed = 1.0
+		self.vaccine_width = 3
+		self.vaccine_height = 15
+		self.vaccine_color = (60, 60, 60)
+		self.vaccines_allowed = 10
 		
