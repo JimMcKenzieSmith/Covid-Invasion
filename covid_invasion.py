@@ -5,6 +5,7 @@ import pygame
 from settings import Settings
 from nurse import Nurse
 from vaccine import Vaccine 
+from virus import Virus
 
 class CovidInvasion(object):
 	"""Overall class to manage game assets and behavior"""
@@ -23,6 +24,38 @@ class CovidInvasion(object):
 
 		self.nurse = Nurse(self)
 		self.vaccines = pygame.sprite.Group()
+		self.viruses = pygame.sprite.Group()
+
+		self._create_fleet()
+
+	def _create_fleet(self):
+		"""create the fleet of viruses"""
+		# create a virus and find the number of viruses in a row
+		# spacing between each virus is equal to one virus width
+		virus = Virus(self)
+		virus_width, virus_height = virus.rect.size
+		available_space_x = self.settings.screen_width - (2 * virus_width)
+		number_viruses_x = available_space_x // (2 * virus_width)
+
+		# determine the number of rows of viruses that fit on the screen
+		nurse_height = self.nurse.rect.height
+		available_space_y = (self.settings.screen_height - (3 * virus_height) - nurse_height)
+		number_rows = available_space_y // (2 * virus_height)
+
+		# create full fleet of viruses
+		for row_number in range(number_rows):
+			for virus_number in range(number_viruses_x):
+				self._create_virus(virus_number, row_number)
+			
+
+	def _create_virus(self, virus_number, row_number):
+		"""create a virus and place it in the row"""
+		virus = Virus(self)
+		virus_width, virus_height = virus.rect.size
+		virus.x = virus_width + 2 * virus_width * virus_number
+		virus.rect.x = virus.x
+		virus.rect.y = virus.rect.height + 2 * virus.rect.height * row_number
+		self.viruses.add(virus)
 
 
 	def run_game(self):
@@ -76,6 +109,7 @@ class CovidInvasion(object):
 		self.nurse.blitme()
 		for vaccine in self.vaccines.sprites():
 			vaccine.draw_vaccine()
+		self.viruses.draw(self.screen)
 
 	def _update_vaccines(self):
 		"""update position of vaccines and get rid of old vaccines"""
